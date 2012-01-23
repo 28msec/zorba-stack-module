@@ -116,3 +116,24 @@ declare %ann:sequential function stack:delete($name as xs:QName)
   else
     ()
 };
+
+(:~
+ : Copy all nodes from source stack to a destination stack.
+ : If destination stack does not exist, it is created first.
+ : If destination stack is not empty, the nodes are appended on top.
+ : @param $destname QName of the destination stack
+ : @param $sourcename QName of the source stack
+:)
+declare %ann:sequential function stack:copy($destname as xs:QName, $sourcename as xs:QName)
+{
+  if(fn:not(collections-ddl:is-available-collection($destname))) then
+    collections-ddl:create($destname);
+  else
+    ();
+  if(collections-ddl:is-available-collection($sourcename)) then
+  {
+    collections-dml:insert-nodes-first($destname, collections-dml:collection($sourcename));
+  }
+  else
+    ();
+};
