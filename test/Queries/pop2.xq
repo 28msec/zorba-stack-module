@@ -2,5 +2,6 @@ import module namespace stack = "http://www.zorba-xquery.com/modules/store/data-
 
 declare variable $stname as xs:QName := fn:QName("http://stack-example.zorba-xquery.com", "stack1");
 
+stack:push($stname, <b/>);
 stack:push($stname, <a/>);
 stack:pop($stname)
