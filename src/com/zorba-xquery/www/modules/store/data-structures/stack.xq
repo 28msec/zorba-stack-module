@@ -21,7 +21,7 @@ xquery version "3.0";
  : Stacks are created at first node insert.
  :
  : @author Daniel Turcanu
- : @project store/data-structures
+ : @project store/data structures
  :)
 module namespace stack = "http://www.zorba-xquery.com/modules/store/data-structures/stack";
 
@@ -33,108 +33,148 @@ declare namespace ver = "http://www.zorba-xquery.com/options/versioning";
 declare option ver:module-version "1.0";
 
 (:~
- : Return the top node in the stack, without removing it.
- : @param $name QName of the stack
- : @return the top node, or empty sequence if stack with this QName does not exist or is empty
+ : URI for all collections QNames. Stack names are combined with this URI to construct
+ : QNames used by collection api. <br/>
+ : The URI is "http://www.zorba-xquery.com/modules/store/data-structures/stack".
+ :)
+declare variable $stack:global-uri := "http://www.zorba-xquery.com/modules/store/data-structures/stack";
+
+(:~
+ : Create a stack with this name. If stack exists, it is deleted first.
+ : @param $name string name of the new stack
 :)
-declare function stack:top($name as xs:QName) as node()?
+declare %ann:sequential function stack:create($name as xs:string)
 {
-  if(collections-ddl:is-available-collection($name) and fn:not(fn:empty(collections-dml:collection($name)))) then
-    collections-dml:collection($name)[1]
-  else 
-    ()
+  variable $stname := fn:QName($stack:global-uri, $name);
+  stack:delete($name);
+  collections-ddl:create($stname);
+};
+
+(:~
+ : Return a list of string names for available stacks.
+ : @return the list of created stack names
+ : @example test/Queries/available1.xq
+:)
+declare function stack:available-stacks() as xs:string*
+{
+  for $coll-qname in collections-ddl:available-collections()
+  where fn:namespace-uri-from-QName($coll-qname) eq $stack:global-uri
+  return fn:local-name-from-QName($coll-qname)
+};
+
+(:~
+ : Return the top node in the stack, without removing it.
+ : @param $name string name of the stack
+ : @return the top node, or empty sequence if stack is empty
+ : @example test/Queries/top1.xq
+:)
+declare function stack:top($name as xs:string) as node()?
+{
+  let $stname := fn:QName($stack:global-uri, $name)
+  let $stack-content := collections-dml:collection($stname)
+  return
+      if(fn:not(fn:empty($stack-content))) then
+        $stack-content[1]
+      else 
+        ()
 };
                                  
 (:~
  : Return the top node in the stack, and remove it.
- : @param $name QName of the stack
- : @return the top node, or empty sequence if stack with this QName does not exist or is empty
+ : @param $name string name of the stack
+ : @return the top node, or empty sequence if stack is empty
+ : @example test/Queries/pop2.xq
 :)
-declare %ann:sequential function stack:pop($name as xs:QName) as node()?
+declare %ann:sequential function stack:pop($name as xs:string) as node()?
 {
-  if(collections-ddl:is-available-collection($name) and fn:not(fn:empty(collections-dml:collection($name)))) then
-  {
-    variable $top-node := collections-dml:collection($name)[1];
-    collections-dml:delete-node-first($name);
-    $top-node
-  }
-  else 
-    ()
+  let $stname := fn:QName($stack:global-uri, $name)
+  let $stack-content := collections-dml:collection($stname)
+  return 
+      if(fn:not(fn:empty($stack-content))) then
+      {
+        variable $top-node := $stack-content[1];
+        collections-dml:delete-node-first($stname);
+        $top-node
+      }
+      else 
+        ()
 };
 
 (:~
- : Add a new node to the stack. If the stack does not exist, it is created first.
- : @param $name QName of the stack
+ : Add a new node to the stack.
+ : @param $name string name of the stack
  : @param $value the node to be added
+ : @example test/Queries/push1.xq
 :)
-declare %ann:sequential function stack:push($name as xs:QName, $value as node())
+declare %ann:sequential function stack:push($name as xs:string, $value as node())
 {
-  if(fn:not(collections-ddl:is-available-collection($name))) then
-    collections-ddl:create($name);
-  else
-    ();
-  collections-dml:apply-insert-nodes-first($name, $value);
+  variable $stname := fn:QName($stack:global-uri, $name);
+  collections-dml:apply-insert-nodes-first($stname, $value);
 };
 
 (:~
  : Checks if a stack exists and is empty.
- : @param $name QName of the stack
+ : @param $name string name of the stack
  : @return true is the stack is empty or does not exist
+ : @example test/Queries/empty1.xq
 :)
-declare function stack:empty($name as xs:QName) as xs:boolean
+declare function stack:empty($name as xs:string) as xs:boolean
 {
-  if(collections-ddl:is-available-collection($name)) then
-    fn:empty(collections-dml:collection($name))
-  else 
-    fn:true()
+  let $stname := fn:QName($stack:global-uri, $name)
+  return
+      if(collections-ddl:is-available-collection($stname)) then
+        fn:empty(collections-dml:collection($stname))
+      else 
+        fn:true()
 };
 
 (:~
  : Get the count of nodes in the stack.
- : @param $name QName of the stack
- : @return the count of nodes, or zero if the stack does not exist
+ : @param $name string name of the stack
+ : @return the count of nodes
+ : @example test/Queries/size1.xq
 :)
-declare function stack:size($name as xs:QName) as xs:integer
+declare function stack:size($name as xs:string) as xs:integer
 {
-  if(collections-ddl:is-available-collection($name)) then
-    fn:count(collections-dml:collection($name))
-  else 
-    0
+  let $stname := fn:QName($stack:global-uri, $name)
+  return
+    fn:count(collections-dml:collection($stname))
 };
 
 (:~
  : Remove the stack with all the nodes in it.
- : @param $name QName of the stack
+ : @param $name string name of the stack
+ : @example test/Queries/delete1.xq
 :)
-declare %ann:sequential function stack:delete($name as xs:QName)
+declare %ann:sequential function stack:delete($name as xs:string)
 {
-  if(collections-ddl:is-available-collection($name)) then
-  {
-    collections-dml:delete-nodes-first($name, stack:size($name));
-    collections-ddl:delete($name);
-    ()
-  }
-  else
-    ()
+  let $stname := fn:QName($stack:global-uri, $name)
+  return
+      if(collections-ddl:is-available-collection($stname)) then
+      {
+        collections-dml:delete-nodes-first($stname, stack:size($name));
+        collections-ddl:delete($stname);
+        ()
+      }
+      else
+        ()
 };
 
 (:~
  : Copy all nodes from source stack to a destination stack.
  : If destination stack does not exist, it is created first.
  : If destination stack is not empty, the nodes are appended on top.
- : @param $destname QName of the destination stack
- : @param $sourcename QName of the source stack
+ : @param $destname string name of the destination stack
+ : @param $sourcename string name of the source stack
+ : @example test/Queries/copy1.xq
 :)
-declare %ann:sequential function stack:copy($destname as xs:QName, $sourcename as xs:QName)
+declare %ann:sequential function stack:copy($destname as xs:string, $sourcename as xs:string)
 {
-  if(fn:not(collections-ddl:is-available-collection($destname))) then
-    collections-ddl:create($destname);
+  variable $destqname := fn:QName($stack:global-uri, $destname);
+  if(fn:not(collections-ddl:is-available-collection($destqname))) then
+    collections-ddl:create($destqname);
   else
     ();
-  if(collections-ddl:is-available-collection($sourcename)) then
-  {
-    collections-dml:insert-nodes-first($destname, collections-dml:collection($sourcename));
-  }
-  else
-    ();
+  variable $sourceqname := fn:QName($stack:global-uri, $sourcename);
+  collections-dml:insert-nodes-first($destqname, collections-dml:collection($sourceqname));
 };
