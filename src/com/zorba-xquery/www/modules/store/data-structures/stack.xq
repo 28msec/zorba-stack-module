@@ -17,7 +17,7 @@ xquery version "3.0";
 :)
 
 (:~
- : Implementation of stack for node items, using collections data structures.
+ : Implementation of stack for node items, using collections data structures.<br />
  : Stacks are created at first node insert.
  :
  : @author Daniel Turcanu
@@ -33,14 +33,13 @@ declare namespace ver = "http://www.zorba-xquery.com/options/versioning";
 declare option ver:module-version "1.0";
 
 (:~
- : URI for all collections QNames. Stack names are combined with this URI to construct
- : QNames used by collection api. <br/>
+ : URI for all collections QNames. Stack names are combined with this URI to construct QNames used by collection api.
  : The URI is "http://www.zorba-xquery.com/modules/store/data-structures/stack".
  :)
 declare variable $stack:global-uri := "http://www.zorba-xquery.com/modules/store/data-structures/stack";
 
 (:~
- : Create a stack with this name. If stack exists, it is deleted first.
+ : Create a stack with this name. <br /> If stack exists, it is deleted first.
  : @param $name string name of the new stack
 :)
 declare %ann:sequential function stack:create($name as xs:string)
@@ -161,8 +160,8 @@ declare %ann:sequential function stack:delete($name as xs:string)
 };
 
 (:~
- : Copy all nodes from source stack to a destination stack.
- : If destination stack does not exist, it is created first.
+ : Copy all nodes from source stack to a destination stack.<br />
+ : If destination stack does not exist, it is created first.<br />
  : If destination stack is not empty, the nodes are appended on top.
  : @param $destname string name of the destination stack
  : @param $sourcename string name of the source stack
