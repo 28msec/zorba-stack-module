@@ -33,14 +33,32 @@ declare namespace ver = "http://www.zorba-xquery.com/options/versioning";
 declare option ver:module-version "1.0";
 
 (:~
- : Create a stack with this name. <br /> If stack exists, it is deleted first.
+ : Errors namespace URI.
+:)
+declare variable $stack:errNS as xs:string := "http://www.zorba-xquery.com/modules/store/data-structures/stack";
+ 
+(:~
+ : xs:QName with namespace URI="http://www.zorba-xquery.com/modules/store/data-structures/stack" and local name "stack:errNA"
+:)
+declare variable $stack:errNA as xs:QName := fn:QName($stack:errNS, "stack:errNA");
+
+(:~
+ : xs:QName with namespace URI="http://www.zorba-xquery.com/modules/store/data-structures/stack" and local name "stack:errExists"
+:)
+declare variable $stack:errExists as xs:QName := fn:QName($stack:errNS, "stack:errExists");
+
+(:~
+ : Create a stack with this name. <br /> If stack exists, an error is raised.
  : @param $name name of the new stack.
  : @return ()
+ : @error stack:errExists if the stack identified by $name already exists.
  :)
 declare %ann:sequential function stack:create($name as xs:QName)
 {
-  stack:delete($name);
-  collections-ddl:create($name);
+  if(collections-ddl:is-available-collection($name)) then
+    fn:error($stack:errExists, "Stack already exists.");
+  else
+    collections-ddl:create($name);
 };
 
 (:~
@@ -50,8 +68,7 @@ declare %ann:sequential function stack:create($name as xs:QName)
  :)
 declare function stack:available-stacks() as xs:QName*
 {
-  for $collQName in collections-ddl:available-collections()
-  return $collQName
+  collections-ddl:available-collections()
 };
 
 (:~
@@ -59,43 +76,42 @@ declare function stack:available-stacks() as xs:QName*
  : @param $name name of the stack.
  : @return the top node, or empty sequence if stack is empty.
  : @example test/Queries/top1.xq
+ : @error stack:errNA if the stack identified by $name does not exist.
  :)
 declare function stack:top($name as xs:QName) as node()?
 {
-  let $stackContent := collections-dml:collection($name)
-  return
-    if(fn:not(fn:empty($stackContent))) then
-      $stackContent[1]
-    else 
-      ()
+  if(not(collections-ddl:is-available-collection($name))) then
+    fn:error($stack:errNA, "Stack does not exist.")
+  else
+    collections-dml:collection($name)[1]
 };
-                                 
+
 (:~
  : Return the top node in the stack, and remove it.
  : @param $name name of the stack.
  : @return the top node, or empty sequence if stack is empty.
  : @example test/Queries/pop2.xq
+ : @error stack:errNA if the stack identified by $name does not exist.
  :)
 declare %ann:sequential function stack:pop($name as xs:QName) as node()?
 {
-  let $stackContent := collections-dml:collection($name)
-  return 
-    if(fn:not(fn:empty($stackContent))) then
-    {
-      variable $topNode := $stackContent[1];
-      collections-dml:delete-node-first($name);
-      $topNode
-    }
-    else 
-      ()
+  if(not(collections-ddl:is-available-collection($name))) then
+    fn:error($stack:errNA, "Stack does not exist.")
+  else
+  {
+    variable $topNode := collections-dml:collection($name)[1];
+    collections-dml:delete-node-first($name);
+    $topNode
+  }
 };
 
 (:~
- : Add a new node to the stack.
+ : Add a new node to the stack; the stack will contain a copy of the given node.
  : @param $name name of the stack.
  : @param $value the node to be added.
  : @return ()
  : @example test/Queries/push1.xq
+ : @error stack:errNA if the stack identified by $name does not exist.
  :)
 declare %ann:sequential function stack:push($name as xs:QName, $value as node())
 {
@@ -107,13 +123,14 @@ declare %ann:sequential function stack:push($name as xs:QName, $value as node())
  : @param $name name of the stack.
  : @return true is the stack is empty or does not exist.
  : @example test/Queries/empty1.xq
+ : @error stack:errNA if the stack identified by $name does not exist.
  :)
 declare function stack:empty($name as xs:QName) as xs:boolean
 {
-  if(collections-ddl:is-available-collection($name)) then
+  if(not(collections-ddl:is-available-collection($name))) then
+    fn:error($stack:errNA, "Stack does not exist.")
+  else
     fn:empty(collections-dml:collection($name))
-  else 
-    fn:true()
 };
 
 (:~
@@ -121,10 +138,14 @@ declare function stack:empty($name as xs:QName) as xs:boolean
  : @param $name name of the stack.
  : @return the count of nodes.
  : @example test/Queries/size1.xq
+ : @error stack:errNA if the stack identified by $name does not exist.
  :)
 declare function stack:size($name as xs:QName) as xs:integer
 {
-  fn:count(collections-dml:collection($name))
+  if(not(collections-ddl:is-available-collection($name))) then
+    fn:error($stack:errNA, "Stack does not exist.")
+  else
+    fn:count(collections-dml:collection($name))
 };
 
 (:~
@@ -132,6 +153,7 @@ declare function stack:size($name as xs:QName) as xs:integer
  : @param $name name of the stack.
  : @return ()
  : @example test/Queries/delete1.xq
+ : @error stack:errNA if the stack identified by $name does not exist.
  :)
 declare %ann:sequential function stack:delete($name as xs:QName)
 {
@@ -142,7 +164,7 @@ declare %ann:sequential function stack:delete($name as xs:QName)
     ()
   }
   else
-    ()
+    fn:error($stack:errNA, "Stack does not exist.")
 };
 
 (:~

@@ -6,4 +6,4 @@ variable $stName := fn:QName("", "stack1");
 collections-ddl:create($name);
 
 stack:create($stName);
-stack:available-stacks()
+fn:count(stack:available-stacks())

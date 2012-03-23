@@ -8,7 +8,6 @@ variable $stName := fn:QName("", "stack1");
   stack:top($stName),
   stack:size($stName),
   stack:pop($stName),
-  stack:pop($stName),
   stack:top($stName),
   stack:size($stName)
 )
