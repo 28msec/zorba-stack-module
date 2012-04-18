@@ -17,8 +17,12 @@ xquery version "3.0";
 :)
 
 (:~
- : Implementation of stack for node items, using collections data structures.<br />
- : Stacks are created at first node insert.
+ : Implementation of stack for node items, using dynamic collections.<br />
+ : Please refer to our documentation for <a href="../../html/data_lifecycle.html">more information</a> 
+ : about the lifecycle management and the manipulation of such collections.<br />
+ : Please note that for listing the available stacks and also deleting a stack the functions in the 
+ : <a href="www.zorba-xquery.com_modules_store_dynamic_collections_ddl.html">http://www.zorba-xquery.com/modules/store/dynamic/collections/ddl</a>
+ : should be used.
  :
  : @author Daniel Turcanu
  : @project store/data structures
@@ -59,16 +63,6 @@ declare %ann:sequential function stack:create($name as xs:QName)
     fn:error($stack:errExists, "Stack already exists.");
   else
     collections-ddl:create($name);
-};
-
-(:~
- : Return a list of names for available stacks.
- : @return the list of created stack names.
- : @example test/Queries/available1.xq
- :)
-declare function stack:available-stacks() as xs:QName*
-{
-  collections-ddl:available-collections()
 };
 
 (:~
@@ -146,25 +140,6 @@ declare function stack:size($name as xs:QName) as xs:integer
     fn:error($stack:errNA, "Stack does not exist.")
   else
     fn:count(collections-dml:collection($name))
-};
-
-(:~
- : Remove the stack with all the nodes in it.
- : @param $name name of the stack.
- : @return ()
- : @example test/Queries/delete1.xq
- : @error stack:errNA if the stack identified by $name does not exist.
- :)
-declare %ann:sequential function stack:delete($name as xs:QName)
-{
-  if(collections-ddl:is-available-collection($name)) then
-  {
-    collections-dml:delete-nodes-first($name, stack:size($name));
-    collections-ddl:delete($name);
-    ()
-  }
-  else
-    fn:error($stack:errNA, "Stack does not exist.")
 };
 
 (:~
