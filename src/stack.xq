@@ -52,7 +52,7 @@ declare variable $stack:errExists as xs:QName := fn:QName($stack:errNS, "stack:e
  : @return ()
  : @error stack:errExists if the stack identified by $name already exists.
  :)
-declare %ann:sequential function stack:create($name as xs:QName) as none
+declare %ann:sequential function stack:create($name as xs:QName) as empty
 {
   if(collections-ddl:is-available-collection($name)) then
     fn:error($stack:errExists, "Stack already exists.");
@@ -102,7 +102,7 @@ declare %ann:sequential function stack:pop($name as xs:QName) as node()?
  : @example test/Queries/push1.xq
  : @error stack:errNA if the stack identified by $name does not exist.
  :)
-declare %ann:sequential function stack:push($name as xs:QName, $value as node()) as none
+declare %ann:sequential function stack:push($name as xs:QName, $value as node()) as empty
 {
   collections-dml:apply-insert-nodes-first($name, $value);
 };
@@ -146,7 +146,7 @@ declare function stack:size($name as xs:QName) as xs:integer
  : @return ()
  : @example test/Queries/copy1.xq
  :)
-declare %ann:sequential function stack:copy($destName as xs:QName, $sourceName as xs:QName) as none
+declare %ann:sequential function stack:copy($destName as xs:QName, $sourceName as xs:QName) as empty
 {
   if(fn:not(collections-ddl:is-available-collection($destName))) then
     collections-ddl:create($destName);
