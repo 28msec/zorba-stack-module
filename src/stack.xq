@@ -18,13 +18,8 @@ xquery version "3.0";
 
 (:~
  : Implementation of stack for node items, using dynamic collections.<br />
- : Please refer to our documentation for <a href="../../html/data_lifecycle.html">more information</a> 
- : about the lifecycle management and the manipulation of such collections.<br />
- : Please note that for listing the available stacks and also deleting a stack the functions in the 
- : <a href="www.zorba-xquery.com_modules_store_dynamic_collections_ddl.html">http://www.zorba-xquery.com/modules/store/dynamic/collections/ddl</a>
- : should be used.
  :
- : @author Daniel Turcanu
+ : @author Daniel Turcanu, Sorin Nasoi
  : @project store/data structures
  :)
 module namespace stack = "http://www.zorba-xquery.com/modules/store/data-structures/stack";
@@ -42,12 +37,12 @@ declare option ver:module-version "1.0";
 declare variable $stack:errNS as xs:string := "http://www.zorba-xquery.com/modules/store/data-structures/stack";
  
 (:~
- : xs:QName with namespace URI="http://www.zorba-xquery.com/modules/store/data-structures/stack" and local name "stack:errNA"
+ : xs:QName with namespace URI="http://www.zorba-xquery.com/modules/store/data-structures/stack" and local name "errNA"
 :)
 declare variable $stack:errNA as xs:QName := fn:QName($stack:errNS, "stack:errNA");
 
 (:~
- : xs:QName with namespace URI="http://www.zorba-xquery.com/modules/store/data-structures/stack" and local name "stack:errExists"
+ : xs:QName with namespace URI="http://www.zorba-xquery.com/modules/store/data-structures/stack" and local name "errExists"
 :)
 declare variable $stack:errExists as xs:QName := fn:QName($stack:errNS, "stack:errExists");
 
@@ -57,7 +52,7 @@ declare variable $stack:errExists as xs:QName := fn:QName($stack:errNS, "stack:e
  : @return ()
  : @error stack:errExists if the stack identified by $name already exists.
  :)
-declare %ann:sequential function stack:create($name as xs:QName)
+declare %ann:sequential function stack:create($name as xs:QName) as none
 {
   if(collections-ddl:is-available-collection($name)) then
     fn:error($stack:errExists, "Stack already exists.");
@@ -107,7 +102,7 @@ declare %ann:sequential function stack:pop($name as xs:QName) as node()?
  : @example test/Queries/push1.xq
  : @error stack:errNA if the stack identified by $name does not exist.
  :)
-declare %ann:sequential function stack:push($name as xs:QName, $value as node())
+declare %ann:sequential function stack:push($name as xs:QName, $value as node()) as none
 {
   collections-dml:apply-insert-nodes-first($name, $value);
 };
@@ -151,7 +146,7 @@ declare function stack:size($name as xs:QName) as xs:integer
  : @return ()
  : @example test/Queries/copy1.xq
  :)
-declare %ann:sequential function stack:copy($destName as xs:QName, $sourceName as xs:QName)
+declare %ann:sequential function stack:copy($destName as xs:QName, $sourceName as xs:QName) as none
 {
   if(fn:not(collections-ddl:is-available-collection($destName))) then
     collections-ddl:create($destName);
