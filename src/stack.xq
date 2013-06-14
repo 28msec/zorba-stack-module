@@ -22,7 +22,7 @@ xquery version "3.0";
  : @author Daniel Turcanu, Sorin Nasoi
  : @project store/data structures
  :)
-module namespace stack = "http://www.zorba-xquery.com/modules/store/data-structures/stack";
+module namespace stack = "http://zorba.io/modules/stack";
 
 import module namespace collections-ddl = "http://www.zorba-xquery.com/modules/store/dynamic/collections/ddl";
 import module namespace collections-dml = "http://www.zorba-xquery.com/modules/store/dynamic/collections/dml";
@@ -34,7 +34,7 @@ declare option ver:module-version "1.0";
 (:~
  : Errors namespace URI.
 :)
-declare variable $stack:errNS as xs:string := "http://www.zorba-xquery.com/modules/store/data-structures/stack";
+declare variable $stack:errNS as xs:string := "http://zorba.io/modules/stack";
  
 (:~
  : xs:QName with namespace URI="http://www.zorba-xquery.com/modules/store/data-structures/stack" and local name "errNA"
@@ -47,10 +47,11 @@ declare variable $stack:errNA as xs:QName := fn:QName($stack:errNS, "stack:errNA
 declare variable $stack:errExists as xs:QName := fn:QName($stack:errNS, "stack:errExists");
 
 (:~
- : Create a stack with this name. <br /> If stack exists, an error is raised.
- : @param $name name of the new stack.
- : @return ()
- : @error stack:errExists if the stack identified by $name already exists.
+ : <p> Create a stack with this name. If stack exists, an error is raised. </p>
+ :
+ : @param  $name name of the new stack.
+ : @return an empty sequence.
+ : @error  stack:errExists if the stack identified by $name already exists.
  :)
 declare %ann:sequential function stack:create($name as xs:QName) as empty-sequence()
 {
@@ -61,11 +62,12 @@ declare %ann:sequential function stack:create($name as xs:QName) as empty-sequen
 };
 
 (:~
- : Return the top node in the stack, without removing it.
- : @param $name name of the stack.
- : @return the top node, or empty sequence if stack is empty.
+ : <p> Return the top node in the stack, without removing it. </p>
+ :
+ : @param   $name name of the stack.
+ : @return  the top node, or empty sequence if stack is empty.
  : @example test/Queries/top1.xq
- : @error stack:errNA if the stack identified by $name does not exist.
+ : @error   stack:errNA if the stack identified by $name does not exist.
  :)
 declare function stack:top($name as xs:QName) as node()?
 {
@@ -76,11 +78,12 @@ declare function stack:top($name as xs:QName) as node()?
 };
 
 (:~
- : Return the top node in the stack, and remove it.
- : @param $name name of the stack.
- : @return the top node, or empty sequence if stack is empty.
+ : <p> Return the top node in the stack, and remove it. </p>
+ :
+ : @param   $name name of the stack.
+ : @return  the top node, or empty sequence if stack is empty.
  : @example test/Queries/pop2.xq
- : @error stack:errNA if the stack identified by $name does not exist.
+ : @error   stack:errNA if the stack identified by $name does not exist.
  :)
 declare %ann:sequential function stack:pop($name as xs:QName) as node()?
 {
@@ -95,12 +98,13 @@ declare %ann:sequential function stack:pop($name as xs:QName) as node()?
 };
 
 (:~
- : Add a new node to the stack; the stack will contain a copy of the given node.
- : @param $name name of the stack.
- : @param $value the node to be added.
- : @return ()
+ : <p> Add a new node to the stack; the stack will contain a copy of the given node. </p>
+ :
+ : @param   $name name of the stack.
+ : @param   $value the node to be added.
+ : @return  an empty sequence.
  : @example test/Queries/push1.xq
- : @error stack:errNA if the stack identified by $name does not exist.
+ : @error   stack:errNA if the stack identified by $name does not exist.
  :)
 declare %ann:sequential function stack:push($name as xs:QName, $value as node()) as empty-sequence()
 {
@@ -108,11 +112,12 @@ declare %ann:sequential function stack:push($name as xs:QName, $value as node())
 };
 
 (:~
- : Checks if a stack exists and is empty.
- : @param $name name of the stack.
- : @return true is the stack is empty or does not exist.
+ : <p> Checks if a stack exists and is empty. </p>
+ :
+ : @param   $name name of the stack.
+ : @return  true if the stack is empty or does not exist.
  : @example test/Queries/empty1.xq
- : @error stack:errNA if the stack identified by $name does not exist.
+ : @error   stack:errNA if the stack identified by $name does not exist.
  :)
 declare function stack:empty($name as xs:QName) as xs:boolean
 {
@@ -123,11 +128,12 @@ declare function stack:empty($name as xs:QName) as xs:boolean
 };
 
 (:~
- : Count of nodes in the stack.
- : @param $name name of the stack.
- : @return the count of nodes.
+ : <p> Count of nodes in the stack. </p>
+ :
+ : @param   $name name of the stack.
+ : @return  the amount of nodes.
  : @example test/Queries/size1.xq
- : @error stack:errNA if the stack identified by $name does not exist.
+ : @error   stack:errNA if the stack identified by $name does not exist.
  :)
 declare function stack:size($name as xs:QName) as xs:integer
 {
@@ -138,12 +144,13 @@ declare function stack:size($name as xs:QName) as xs:integer
 };
 
 (:~
- : Copy all nodes from source stack to a destination stack.<br />
- : If destination stack does not exist, it is created first.<br />
- : If destination stack is not empty, the nodes are appended on top.
- : @param $destName name of the destination stack.
- : @param $sourceName name of the source stack.
- : @return ()
+ : <p> Copy all nodes from source stack to a destination stack.
+ : If destination stack does not exist, it is created first.
+ : If destination stack is not empty, the nodes are appended on top. </p>
+ :
+ : @param   $destName name of the destination stack.
+ : @param   $sourceName name of the source stack.
+ : @return  an empty sequence.
  : @example test/Queries/copy1.xq
  :)
 declare %ann:sequential function stack:copy($destName as xs:QName, $sourceName as xs:QName) as empty-sequence()
