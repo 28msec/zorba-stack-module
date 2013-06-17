@@ -20,7 +20,7 @@ xquery version "3.0";
  : Implementation of stack for node items, using dynamic collections.<br />
  :
  : @author Daniel Turcanu, Sorin Nasoi
- : @project store/data structures
+ : @project Zorba/Data Store/Data Structures/Stack
  :)
 module namespace stack = "http://www.zorba-xquery.com/modules/store/data-structures/stack";
 
