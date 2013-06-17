@@ -17,7 +17,7 @@ xquery version "3.0";
 :)
 
 (:~
- : Implementation of stack for node items, using dynamic collections.<br />
+ : <p>Implementation of stack for node items, using dynamic collections.<p/>
  :
  : @author Daniel Turcanu, Sorin Nasoi
  : @project store/data structures
