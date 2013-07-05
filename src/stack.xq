@@ -92,7 +92,7 @@ declare %ann:sequential function stack:pop($name as xs:QName) as structured-item
   else
   {
     variable $topNode := collections-dml:collection($name)[1];
-    collections-dml:delete-node-first($name);
+    collections-dml:delete-first($name);
     $topNode
   }
 };
@@ -108,7 +108,7 @@ declare %ann:sequential function stack:pop($name as xs:QName) as structured-item
  :)
 declare %ann:sequential function stack:push($name as xs:QName, $value as structured-item()) as empty-sequence()
 {
-  collections-dml:apply-insert-nodes-first($name, $value);
+  collections-dml:apply-insert-first($name, $value);
 };
 
 (:~
@@ -159,5 +159,5 @@ declare %ann:sequential function stack:copy($destName as xs:QName, $sourceName a
     collections-ddl:create($destName);
   else
     ();
-  collections-dml:insert-nodes-first($destName, collections-dml:collection($sourceName));
+  collections-dml:insert-first($destName, collections-dml:collection($sourceName));
 };
