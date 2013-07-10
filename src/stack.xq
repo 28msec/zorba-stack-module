@@ -17,7 +17,7 @@ xquery version "3.0";
 :)
 
 (:~
- : <p>Implementation of stack for node items, using dynamic collections.<p/>
+ : Implementation of stack for node items, using dynamic collections.<p/>
  :
  : @author Daniel Turcanu, Sorin Nasoi
  : @project store/data structures
@@ -31,23 +31,14 @@ declare namespace ann = "http://www.zorba-xquery.com/annotations";
 declare namespace ver = "http://www.zorba-xquery.com/options/versioning";
 declare option ver:module-version "1.0";
 
-(:~
- : Errors namespace URI.
-:)
-declare variable $stack:errNS as xs:string := "http://zorba.io/modules/stack";
+declare %private variable $stack:errNS as xs:string := "http://zorba.io/modules/stack";
  
-(:~
- : xs:QName with namespace URI="http://www.zorba-xquery.com/modules/store/data-structures/stack" and local name "NOT-EXISTS"
-:)
-declare variable $stack:NOT-EXISTS as xs:QName := fn:QName($stack:errNS, "stack:NOT-EXISTS");
+declare %private variable $stack:NOT-EXISTS as xs:QName := fn:QName($stack:errNS, "stack:NOT-EXISTS");
+
+declare %private variable $stack:EXISTS as xs:QName := fn:QName($stack:errNS, "stack:EXISTS");
 
 (:~
- : xs:QName with namespace URI="http://www.zorba-xquery.com/modules/store/data-structures/stack" and local name "EXISTS"
-:)
-declare variable $stack:EXISTS as xs:QName := fn:QName($stack:errNS, "stack:EXISTS");
-
-(:~
- : Create a stack with this name. If stack exists, an error is raised. </p>
+ : Create a stack with this name. If stack exists, an error is raised. <p/>
  :
  : @param  $name name of the new stack.
  : @return an empty sequence.
@@ -62,7 +53,7 @@ declare %ann:sequential function stack:create($name as xs:QName) as empty-sequen
 };
 
 (:~
- : Return the top node in the stack, without removing it. </p>
+ : Return the top node in the stack, without removing it. <p/>
  :
  : @param   $name name of the stack.
  : @return  the top node, or empty sequence if stack is empty.
@@ -78,7 +69,7 @@ declare function stack:top($name as xs:QName) as structured-item()?
 };
 
 (:~
- : Return the top node in the stack, and remove it. </p>
+ : Return the top node in the stack, and remove it. <p/>
  :
  : @param   $name name of the stack.
  : @return  the top node, or empty sequence if stack is empty.
@@ -98,7 +89,7 @@ declare %ann:sequential function stack:pop($name as xs:QName) as structured-item
 };
 
 (:~
- : Add a new node to the stack; the stack will contain a copy of the given node. </p>
+ : Add a new node to the stack; the stack will contain a copy of the given node. <p/>
  :
  : @param   $name name of the stack.
  : @param   $value the node to be added.
@@ -112,7 +103,7 @@ declare %ann:sequential function stack:push($name as xs:QName, $value as structu
 };
 
 (:~
- : Checks if a stack exists and is empty. </p>
+ : Checks if a stack exists and is empty. <p/>
  :
  : @param   $name name of the stack.
  : @return  true if the stack is empty or does not exist.
@@ -128,7 +119,7 @@ declare function stack:empty($name as xs:QName) as xs:boolean
 };
 
 (:~
- : Count of nodes in the stack. </p>
+ : Count of nodes in the stack. <p/>
  :
  : @param   $name name of the stack.
  : @return  the amount of nodes.
@@ -144,9 +135,9 @@ declare function stack:size($name as xs:QName) as xs:integer
 };
 
 (:~
- : Copy all nodes from source stack to a destination stack. </p>
- : If destination stack does not exist, it is created first. </p>
- : If destination stack is not empty, the nodes are appended on top. </p>
+ : Copy all nodes from source stack to a destination stack. <p/>
+ : If destination stack does not exist, it is created first. <p/>
+ : If destination stack is not empty, the nodes are appended on top. <p/>
  :
  : @param   $destName name of the destination stack.
  : @param   $sourceName name of the source stack.
