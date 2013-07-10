@@ -17,7 +17,7 @@ xquery version "3.0";
 :)
 
 (:~
- : Implementation of stack for node items, using dynamic collections.<p/>
+ : Implementation of stack for item items, using dynamic collections.<p/>
  :
  : @author Daniel Turcanu, Sorin Nasoi
  : @project store/data structures
@@ -53,10 +53,10 @@ declare %ann:sequential function stack:create($name as xs:QName) as empty-sequen
 };
 
 (:~
- : Return the top node in the stack, without removing it. <p/>
+ : Return the top item in the stack, without removing it. <p/>
  :
  : @param   $name name of the stack.
- : @return  the top node, or empty sequence if stack is empty.
+ : @return  the top item, or empty sequence if stack is empty.
  : @example test/Queries/top1.xq
  : @error   stack:NOT-EXISTS if the stack identified by $name does not exist.
  :)
@@ -69,10 +69,10 @@ declare function stack:top($name as xs:QName) as structured-item()?
 };
 
 (:~
- : Return the top node in the stack, and remove it. <p/>
+ : Return the top item in the stack, and remove it. <p/>
  :
  : @param   $name name of the stack.
- : @return  the top node, or empty sequence if stack is empty.
+ : @return  the top item, or empty sequence if stack is empty.
  : @example test/Queries/pop2.xq
  : @error   stack:NOT-EXISTS if the stack identified by $name does not exist.
  :)
@@ -82,17 +82,17 @@ declare %ann:sequential function stack:pop($name as xs:QName) as structured-item
     fn:error($stack:NOT-EXISTS, "Stack does not exist.")
   else
   {
-    variable $topNode := collections-dml:collection($name)[1];
+    variable $topItem := collections-dml:collection($name)[1];
     collections-dml:delete-first($name);
-    $topNode
+    $topItem
   }
 };
 
 (:~
- : Add a new node to the stack; the stack will contain a copy of the given node. <p/>
+ : Add a new item to the stack; the stack will contain a copy of the given item. <p/>
  :
  : @param   $name name of the stack.
- : @param   $value the node to be added.
+ : @param   $value the item to be added.
  : @return  an empty sequence.
  : @example test/Queries/push1.xq
  : @error   stack:NOT-EXISTS if the stack identified by $name does not exist.
@@ -119,10 +119,10 @@ declare function stack:empty($name as xs:QName) as xs:boolean
 };
 
 (:~
- : Count of nodes in the stack. <p/>
+ : Count of items in the stack. <p/>
  :
  : @param   $name name of the stack.
- : @return  the amount of nodes.
+ : @return  the amount of items.
  : @example test/Queries/size1.xq
  : @error   stack:NOT-EXISTS if the stack identified by $name does not exist.
  :)
@@ -135,9 +135,9 @@ declare function stack:size($name as xs:QName) as xs:integer
 };
 
 (:~
- : Copy all nodes from source stack to a destination stack. <p/>
+ : Copy all items from source stack to a destination stack. <p/>
  : If destination stack does not exist, it is created first. <p/>
- : If destination stack is not empty, the nodes are appended on top. <p/>
+ : If destination stack is not empty, the items are appended on top. <p/>
  :
  : @param   $destName name of the destination stack.
  : @param   $sourceName name of the source stack.
