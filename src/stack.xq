@@ -17,7 +17,10 @@ xquery version "3.0";
 :)
 
 (:~
- : Implementation of stack for item items, using dynamic collections.<p/>
+ : Implementation of stack for items, using dynamic collections.<p/>
+ :
+ : Entries in the stack must be structured items - that is, either JSON
+ : Objects or Arrays, or XML Nodes. <p/>
  :
  : @author Daniel Turcanu, Sorin Nasoi
  : @project store/data structures
