@@ -15,6 +15,6 @@
 
 ##### Stack data structure
 
-DECLARE_ZORBA_MODULE (URI "http://www.zorba-xquery.com/modules/store/data-structures/stack" VERSION 1.0 FILE "stack.xq")
+DECLARE_ZORBA_MODULE (URI "http://zorba.io/modules/stack" VERSION 1.0 FILE "stack.xq")
 
 ADD_TEST_DIRECTORY("${PROJECT_SOURCE_DIR}/test")

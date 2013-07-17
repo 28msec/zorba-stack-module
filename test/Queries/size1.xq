@@ -1,4 +1,4 @@
-import module namespace stack = "http://www.zorba-xquery.com/modules/store/data-structures/stack";
+import module namespace stack = "http://zorba.io/modules/stack";
 
 variable $stName := fn:QName("", "stack1");
 (
